@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Duchess {
     public static void main(String[] args) {
         String logo = "   ___                    _                              \n"
@@ -16,8 +18,21 @@ public class Duchess {
         System.out.println(chatLine);
         System.out.println(greetingMsg);
         System.out.println(chatLine);
+
+        Scanner scanner = new Scanner(System.in);
+        String in = scanner.nextLine();
+        System.out.println(chatLine);
+        while (!in.equals("bye")) {
+            System.out.println(in);
+            System.out.println(chatLine);
+            in = scanner.nextLine();
+            System.out.println(chatLine);
+        }
         System.out.println(exitMsg);
         System.out.println(chatLine);
+
+        scanner.close();
+
     }
 
 }
