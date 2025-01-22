@@ -33,10 +33,31 @@ public class Duchess {
         System.out.println(this.chatLine);
     }
 
-    public void addToList(String in) {
-        listItems[listSz] = new Task(in);
+    public void addTodo(String in) {
+        String taskName = in.substring(in.indexOf(" ") + 1);
+        listItems[listSz] = new Todo(taskName);
+        System.out.println("added: " + listItems[listSz]);
         ++listSz;
-        System.out.println("added: " + in);
+        System.out.println(chatLine);
+    }
+    public void addDeadline(String in) {
+        String byDelimiter = " /by ";
+        String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(byDelimiter));
+        String by = in.substring(in.indexOf(byDelimiter) + byDelimiter.length());
+        listItems[listSz] = new Deadline(taskName, by);
+        System.out.println("added: " + listItems[listSz]);
+        ++listSz;
+        System.out.println(chatLine);
+    }
+    public void addEvent(String in) {
+        String fromDelimiter = " /from ";
+        String toDelimiter = " /to ";
+        String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(fromDelimiter));
+        String from = in.substring(in.indexOf(fromDelimiter) + fromDelimiter.length(), in.indexOf(toDelimiter));
+        String to = in.substring(in.indexOf(toDelimiter) + toDelimiter.length());
+        listItems[listSz] = new Event(taskName, from, to);
+        System.out.println("added: " + listItems[listSz]);
+        ++listSz;
         System.out.println(chatLine);
     }
 
@@ -50,19 +71,21 @@ public class Duchess {
     public void mark(String taskNumStr) {
         int taskNum = Integer.parseInt(taskNumStr);
         this.listItems[taskNum - 1].mark();
+        System.out.println("Okay!");
     }
 
     public void unmark(String taskNumStr) {
         int taskNum = Integer.parseInt(taskNumStr);
         this.listItems[taskNum - 1].unmark();
+        System.out.println("Okay!");
     }
 
     public void start(){
         while (isRunning) {
             in = scanner.nextLine();
-            String[] words = in.split(" ");
+            String[] commandStr= in.split(" ");
             System.out.println(chatLine);
-            switch(words[0]) {
+            switch(commandStr[0]) {
                 case "bye":
                     isRunning = false;
                     break;
@@ -70,13 +93,22 @@ public class Duchess {
                     this.printList();
                     break;
                 case "mark":
-                    this.mark(words[1]);
+                    this.mark(commandStr[1]);
                     break;
                 case "unmark":
-                    this.unmark(words[1]);
+                    this.unmark(commandStr[1]);
+                    break;
+                case "todo":
+                    this.addTodo(in);
+                    break;
+                case "deadline":
+                    this.addDeadline(in);
+                    break;
+                case "event":
+                    this.addEvent(in);
                     break;
                 default:
-                    this.addToList(in);
+                    break;
             }
         }
     }
