@@ -15,14 +15,14 @@ public class Duchess {
     String exitMsg = "Bye. Hope to see you again soon!\n";
 
     Scanner scanner;
-    String[] listItems;
+    Task[] listItems;
     int listSz;
     String in;
 
     public Duchess(){
         this.isRunning = true;
         this.scanner = new Scanner(System.in);
-        this.listItems = new String[100];
+        this.listItems = new Task[100];
         this.listSz = 0;
     }
 
@@ -33,8 +33,8 @@ public class Duchess {
         System.out.println(this.chatLine);
     }
 
-    public void echo(String in) {
-        listItems[listSz] = in;
+    public void addToList(String in) {
+        listItems[listSz] = new Task(in);
         ++listSz;
         System.out.println("added: " + in);
         System.out.println(chatLine);
@@ -47,19 +47,36 @@ public class Duchess {
         System.out.println(chatLine);
     }
 
+    public void mark(String taskNumStr) {
+        int taskNum = Integer.parseInt(taskNumStr);
+        this.listItems[taskNum - 1].mark();
+    }
+
+    public void unmark(String taskNumStr) {
+        int taskNum = Integer.parseInt(taskNumStr);
+        this.listItems[taskNum - 1].unmark();
+    }
+
     public void start(){
         while (isRunning) {
             in = scanner.nextLine();
+            String[] words = in.split(" ");
             System.out.println(chatLine);
-            switch(in) {
+            switch(words[0]) {
                 case "bye":
                     isRunning = false;
                     break;
                 case "list":
                     this.printList();
                     break;
+                case "mark":
+                    this.mark(words[1]);
+                    break;
+                case "unmark":
+                    this.unmark(words[1]);
+                    break;
                 default:
-                    this.echo(in);
+                    this.addToList(in);
             }
         }
     }
