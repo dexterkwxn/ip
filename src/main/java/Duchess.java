@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Duchess {
     boolean isRunning;
@@ -15,15 +16,13 @@ public class Duchess {
     String exitMsg = "Bye. Hope to see you again soon!\n";
 
     Scanner scanner;
-    Task[] listItems;
-    int listSz;
+    ArrayList<Task> taskList;
     String in;
 
     public Duchess() {
         this.isRunning = true;
         this.scanner = new Scanner(System.in);
-        this.listItems = new Task[100];
-        this.listSz = 0;
+        this.taskList = new ArrayList<>();
     }
 
     public void greeting() {
@@ -34,77 +33,91 @@ public class Duchess {
     }
 
     public void addTodo(String in) throws DuchessException  {
-        if (in.indexOf(" ") == -1) {
+        try {
+            String taskName = in.substring(in.indexOf(" ") + 1);
+            Todo task = new Todo(taskName);
+            this.taskList.add(task);
+            System.out.println("added: " + task);
+            System.out.println(chatLine);
+        } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
-        String taskName = in.substring(in.indexOf(" ") + 1);
-        listItems[listSz] = new Todo(taskName);
-        System.out.println("added: " + listItems[listSz]);
-        ++listSz;
-        System.out.println(chatLine);
     }
     public void addDeadline(String in) throws DuchessException {
-        String byDelimiter = " /by ";
-        if (in.indexOf(" ") == -1 || in.indexOf(byDelimiter) == -1) {
+        try {
+            String byDelimiter = " /by ";
+            if (in.indexOf(" ") == -1 || in.indexOf(byDelimiter) == -1) {
+                throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+            }
+            String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(byDelimiter));
+            String by = in.substring(in.indexOf(byDelimiter) + byDelimiter.length());
+            Deadline task = new Deadline(taskName, by);
+            this.taskList.add(task);
+            System.out.println("added: " + task);
+            System.out.println(chatLine);
+        } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
-        String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(byDelimiter));
-        String by = in.substring(in.indexOf(byDelimiter) + byDelimiter.length());
-        listItems[listSz] = new Deadline(taskName, by);
-        System.out.println("added: " + listItems[listSz]);
-        ++listSz;
-        System.out.println(chatLine);
     }
     public void addEvent(String in) throws DuchessException {
-        String fromDelimiter = " /from ";
-        String toDelimiter = " /to ";
-        if (in.indexOf(" ") == -1 || in.indexOf(fromDelimiter) == -1 || in.indexOf(toDelimiter) == -1) {
+        try {
+            String fromDelimiter = " /from ";
+            String toDelimiter = " /to ";
+            String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(fromDelimiter));
+            String from = in.substring(in.indexOf(fromDelimiter) + fromDelimiter.length(), in.indexOf(toDelimiter));
+            String to = in.substring(in.indexOf(toDelimiter) + toDelimiter.length());
+            Event task = new Event(taskName, from, to);
+            this.taskList.add(task);
+            System.out.println("added: " + task);
+            System.out.println(chatLine);
+        } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
-        String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(fromDelimiter));
-        String from = in.substring(in.indexOf(fromDelimiter) + fromDelimiter.length(), in.indexOf(toDelimiter));
-        String to = in.substring(in.indexOf(toDelimiter) + toDelimiter.length());
-        listItems[listSz] = new Event(taskName, from, to);
-        System.out.println("added: " + listItems[listSz]);
-        ++listSz;
-        System.out.println(chatLine);
     }
 
     public void printList() {
-        for (int i = 0; i < listSz; ++i) {
-            System.out.println(i+1 + ". " + listItems[i]);
+        for (int i = 0; i < taskList.size(); ++i) {
+            System.out.println(i+1 + ". " + taskList.get(i));
         }
         System.out.println(chatLine);
     }
 
     public void mark(String in) throws DuchessException {
-        int taskNum = listSz + 1;
+        int taskNum;
         try {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
+            this.taskList.get(taskNum - 1).mark();
+            System.out.println("Item marked!");
+            System.out.println(chatLine);
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
-        if (taskNum > listSz || taskNum < 1) {
-            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
-        }
-        this.listItems[taskNum - 1].mark();
-        System.out.println("Okay!");
     }
 
     public void unmark(String in) throws DuchessException {
-        int taskNum = listSz + 1;
+        int taskNum;
         try {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
+            this.taskList.get(taskNum - 1).unmark();
+            System.out.println("Item unmarked!");
+            System.out.println(chatLine);
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
-        if (taskNum > listSz || taskNum < 1) {
+    }
+    public void deleteTask(String in) throws DuchessException {
+        int taskNum;
+        try {
+            String taskNumStr = in.split(" ")[1];
+            taskNum = Integer.parseInt(taskNumStr);
+            this.taskList.remove(taskNum - 1);
+            System.out.println("Item deleted!");
+            System.out.println(chatLine);
+        } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
-        this.listItems[taskNum - 1].unmark();
-        System.out.println("Okay!");
     }
     public void processUnrecognisedCommand(String command) throws DuchessException {
         throw new DuchessException(command, ErrorType.INVALID_COMMAND);
@@ -137,6 +150,9 @@ public class Duchess {
                         break;
                     case "event":
                         this.addEvent(in);
+                        break;
+                    case "delete":
+                        this.deleteTask(in);
                         break;
                     default:
                         this.processUnrecognisedCommand(in);
