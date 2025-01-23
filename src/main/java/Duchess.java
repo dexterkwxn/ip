@@ -19,29 +19,35 @@ public class Duchess {
     int listSz;
     String in;
 
-    public Duchess(){
+    public Duchess() {
         this.isRunning = true;
         this.scanner = new Scanner(System.in);
         this.listItems = new Task[100];
         this.listSz = 0;
     }
 
-    public void greeting(){
+    public void greeting() {
         System.out.println(this.logo);
         System.out.println(this.chatLine);
         System.out.println(this.greetingMsg);
         System.out.println(this.chatLine);
     }
 
-    public void addTodo(String in) {
+    public void addTodo(String in) throws DuchessException  {
+        if (in.indexOf(" ") == -1) {
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+        }
         String taskName = in.substring(in.indexOf(" ") + 1);
         listItems[listSz] = new Todo(taskName);
         System.out.println("added: " + listItems[listSz]);
         ++listSz;
         System.out.println(chatLine);
     }
-    public void addDeadline(String in) {
+    public void addDeadline(String in) throws DuchessException {
         String byDelimiter = " /by ";
+        if (in.indexOf(" ") == -1 || in.indexOf(byDelimiter) == -1) {
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+        }
         String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(byDelimiter));
         String by = in.substring(in.indexOf(byDelimiter) + byDelimiter.length());
         listItems[listSz] = new Deadline(taskName, by);
@@ -49,9 +55,12 @@ public class Duchess {
         ++listSz;
         System.out.println(chatLine);
     }
-    public void addEvent(String in) {
+    public void addEvent(String in) throws DuchessException {
         String fromDelimiter = " /from ";
         String toDelimiter = " /to ";
+        if (in.indexOf(" ") == -1 || in.indexOf(fromDelimiter) == -1 || in.indexOf(toDelimiter) == -1) {
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+        }
         String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(fromDelimiter));
         String from = in.substring(in.indexOf(fromDelimiter) + fromDelimiter.length(), in.indexOf(toDelimiter));
         String to = in.substring(in.indexOf(toDelimiter) + toDelimiter.length());
@@ -68,47 +77,77 @@ public class Duchess {
         System.out.println(chatLine);
     }
 
-    public void mark(String taskNumStr) {
-        int taskNum = Integer.parseInt(taskNumStr);
+    public void mark(String in) throws DuchessException {
+        int taskNum = listSz + 1;
+        try {
+            String taskNumStr = in.split(" ")[1];
+            taskNum = Integer.parseInt(taskNumStr);
+        } catch (Exception e) {
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+        }
+        if (taskNum > listSz || taskNum < 1) {
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+        }
         this.listItems[taskNum - 1].mark();
         System.out.println("Okay!");
     }
 
-    public void unmark(String taskNumStr) {
-        int taskNum = Integer.parseInt(taskNumStr);
+    public void unmark(String in) throws DuchessException {
+        int taskNum = listSz + 1;
+        try {
+            String taskNumStr = in.split(" ")[1];
+            taskNum = Integer.parseInt(taskNumStr);
+        } catch (Exception e) {
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+        }
+        if (taskNum > listSz || taskNum < 1) {
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+        }
         this.listItems[taskNum - 1].unmark();
         System.out.println("Okay!");
+    }
+    public void processUnrecognisedCommand(String command) throws DuchessException {
+        throw new DuchessException(command, ErrorType.INVALID_COMMAND);
     }
 
     public void start(){
         while (isRunning) {
-            in = scanner.nextLine();
-            String[] commandStr= in.split(" ");
-            System.out.println(chatLine);
-            switch(commandStr[0]) {
-                case "bye":
-                    isRunning = false;
-                    break;
-                case "list":
-                    this.printList();
-                    break;
-                case "mark":
-                    this.mark(commandStr[1]);
-                    break;
-                case "unmark":
-                    this.unmark(commandStr[1]);
-                    break;
-                case "todo":
-                    this.addTodo(in);
-                    break;
-                case "deadline":
-                    this.addDeadline(in);
-                    break;
-                case "event":
-                    this.addEvent(in);
-                    break;
-                default:
-                    break;
+            try {
+                in = scanner.nextLine();
+                String[] commandStr= in.split(" ");
+                System.out.println(chatLine);
+                switch(commandStr[0]) {
+                    case "bye":
+                        isRunning = false;
+                        break;
+                    case "list":
+                        this.printList();
+                        break;
+                    case "mark":
+                        this.mark(in);
+                        break;
+                    case "unmark":
+                        this.unmark(in);
+                        break;
+                    case "todo":
+                        this.addTodo(in);
+                        break;
+                    case "deadline":
+                        this.addDeadline(in);
+                        break;
+                    case "event":
+                        this.addEvent(in);
+                        break;
+                    default:
+                        this.processUnrecognisedCommand(in);
+                        break;
+                }
+            } catch (DuchessException e) {
+                System.out.println(e.getMessage());
+                System.out.println(chatLine);
+            } catch (Exception e) {
+                System.out.println("Exception Caught: " + e.getMessage());
+                System.out.println(chatLine);
             }
         }
     }
