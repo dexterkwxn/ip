@@ -1,5 +1,10 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.File; 
+import java.io.BufferedWriter; 
+import java.io.BufferedReader; 
+import java.io.FileWriter; 
+import java.io.FileReader; 
 
 public class Duchess {
     boolean isRunning;
@@ -14,6 +19,8 @@ public class Duchess {
     String greetingMsg = "Hello! I'm " + chatbotName + "\n" + 
                     "What can I do for you?";
     String exitMsg = "Bye. Hope to see you again soon!\n";
+    private static final String FILE_PATH = "./data/list.txt";
+
 
     Scanner scanner;
     ArrayList<Task> taskList;
@@ -123,6 +130,69 @@ public class Duchess {
         throw new DuchessException(command, ErrorType.INVALID_COMMAND);
     }
 
+
+    public void saveList() {
+        File file = new File(FILE_PATH);
+        file.getParentFile().mkdirs();  
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            for (Task task : this.taskList) {
+                writer.write(task.toFileFormat());
+                writer.newLine();
+            }
+        } catch (Exception e) {
+            System.out.println("Error saving tasks: " + e.getMessage());
+        }
+    }
+
+    public void loadList() {
+        File file = new File(FILE_PATH);
+        
+        if (!file.exists()) {
+            System.out.println("No existing task file found.");
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Task task = parseTask(line);
+                if (task != null) {
+                    this.taskList.add(task);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading tasks: " + e.getMessage());
+        }
+    }
+
+    public Task parseTask(String s) throws Exception {
+        try {
+            String[] parts = s.split(" \\| ");
+            String type = parts[0];
+            boolean isDone = parts[1].equals("1");
+            String taskName = parts[2];
+
+            Task task;
+            if (type.equals("T")) {
+                task = new Todo(taskName);
+            } else if (type.equals("D")) {
+                task = new Deadline(taskName, parts[3]);
+            } else if (type.equals("E")) {
+                task = new Event(taskName, parts[3], parts[4]);
+            } else {
+                return null;
+            }
+
+            if (isDone) {
+                task.mark();
+            }
+            return task;
+        } catch (Exception e) {
+            System.out.println("Skipping corrupted task entry: " + s);
+            return null;
+        }
+    }
+
     public void start(){
         while (isRunning) {
             try {
@@ -158,6 +228,7 @@ public class Duchess {
                         this.processUnrecognisedCommand(in);
                         break;
                 }
+                this.saveList();
             } catch (DuchessException e) {
                 System.out.println(e.getMessage());
                 System.out.println(chatLine);
@@ -175,6 +246,7 @@ public class Duchess {
     }
     public static void main(String[] args) {
         Duchess app = new Duchess();
+        app.loadList();
         app.greeting();
         app.start();
         app.exit();
