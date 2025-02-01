@@ -8,35 +8,21 @@ import java.io.FileReader;
 
 public class Duchess {
     boolean isRunning;
-    String logo = "   ___                    _                              \n"
-            +"  |   \\   _  _     __    | |_      ___     ___     ___   \n"
-            +"  | |) | | +| |   / _|   | ' \\    / -_)   (_-<    (_-<   \n"
-            +"  |___/   \\_,_|   \\__|_  |_||_|   \\___|   /__/_   /__/_  \n"
-            +"_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"| \n"
-            +"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\n";
-    String chatbotName = "Duchess";
-    String chatLine = "________________________________\n";
-    String greetingMsg = "Hello! I'm " + chatbotName + "\n" + 
-                    "What can I do for you?";
-    String exitMsg = "Bye. Hope to see you again soon!\n";
     private static final String FILE_PATH = "./data/list.txt";
 
 
-    Scanner scanner;
-    ArrayList<Task> taskList;
+    TaskList taskList;
     String in;
+    Ui ui;
+    Parser parser;
+    Storage storage;
 
     public Duchess() {
+        this.ui = new Ui();
+        this.parser = new Parser();
         this.isRunning = true;
-        this.scanner = new Scanner(System.in);
-        this.taskList = new ArrayList<>();
-    }
-
-    public void greeting() {
-        System.out.println(this.logo);
-        System.out.println(this.chatLine);
-        System.out.println(this.greetingMsg);
-        System.out.println(this.chatLine);
+        this.storage = new Storage(FILE_PATH);
+        this.taskList = this.storage.loadList();
     }
 
     public void addTodo(String in) throws DuchessException  {
@@ -44,8 +30,7 @@ public class Duchess {
             String taskName = in.substring(in.indexOf(" ") + 1);
             Todo task = new Todo(taskName);
             this.taskList.add(task);
-            System.out.println("added: " + task);
-            System.out.println(chatLine);
+            this.ui.showAddedTask(task.toString());
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -60,8 +45,7 @@ public class Duchess {
             String by = in.substring(in.indexOf(byDelimiter) + byDelimiter.length());
             Deadline task = new Deadline(taskName, by);
             this.taskList.add(task);
-            System.out.println("added: " + task);
-            System.out.println(chatLine);
+            this.ui.showAddedTask(task.toString());
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -75,19 +59,12 @@ public class Duchess {
             String to = in.substring(in.indexOf(toDelimiter) + toDelimiter.length());
             Event task = new Event(taskName, from, to);
             this.taskList.add(task);
-            System.out.println("added: " + task);
-            System.out.println(chatLine);
+            this.ui.showAddedTask(task.toString());
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
     }
 
-    public void printList() {
-        for (int i = 0; i < taskList.size(); ++i) {
-            System.out.println(i+1 + ". " + taskList.get(i));
-        }
-        System.out.println(chatLine);
-    }
 
     public void mark(String in) throws DuchessException {
         int taskNum;
@@ -95,8 +72,7 @@ public class Duchess {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
             this.taskList.get(taskNum - 1).mark();
-            System.out.println("Item marked!");
-            System.out.println(chatLine);
+            this.ui.showItemMarked();
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -108,20 +84,19 @@ public class Duchess {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
             this.taskList.get(taskNum - 1).unmark();
-            System.out.println("Item unmarked!");
-            System.out.println(chatLine);
+            this.ui.showItemUnmarked();
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
     }
+
     public void deleteTask(String in) throws DuchessException {
         int taskNum;
         try {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
             this.taskList.remove(taskNum - 1);
-            System.out.println("Item deleted!");
-            System.out.println(chatLine);
+            this.ui.showItemDeleted();
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -130,81 +105,17 @@ public class Duchess {
         throw new DuchessException(command, ErrorType.INVALID_COMMAND);
     }
 
-
-    public void saveList() {
-        File file = new File(FILE_PATH);
-        file.getParentFile().mkdirs();  
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            for (Task task : this.taskList) {
-                writer.write(task.toFileFormat());
-                writer.newLine();
-            }
-        } catch (Exception e) {
-            System.out.println("Error saving tasks: " + e.getMessage());
-        }
-    }
-
-    public void loadList() {
-        File file = new File(FILE_PATH);
-        
-        if (!file.exists()) {
-            System.out.println("No existing task file found.");
-            return;
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Task task = parseTask(line);
-                if (task != null) {
-                    this.taskList.add(task);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error loading tasks: " + e.getMessage());
-        }
-    }
-
-    public Task parseTask(String s) throws Exception {
-        try {
-            String[] parts = s.split(" \\| ");
-            String type = parts[0];
-            boolean isDone = parts[1].equals("1");
-            String taskName = parts[2];
-
-            Task task;
-            if (type.equals("T")) {
-                task = new Todo(taskName);
-            } else if (type.equals("D")) {
-                task = new Deadline(taskName, parts[3]);
-            } else if (type.equals("E")) {
-                task = new Event(taskName, parts[3], parts[4]);
-            } else {
-                return null;
-            }
-
-            if (isDone) {
-                task.mark();
-            }
-            return task;
-        } catch (Exception e) {
-            System.out.println("Skipping corrupted task entry: " + s);
-            return null;
-        }
-    }
-
     public void start(){
         while (isRunning) {
             try {
-                in = scanner.nextLine();
-                String[] commandStr= in.split(" ");
-                System.out.println(chatLine);
+                in = this.ui.readCommand();
+                String[] commandStr= this.parser.parseCommand(in);
                 switch(commandStr[0]) {
                     case "bye":
                         isRunning = false;
                         break;
                     case "list":
-                        this.printList();
+                        this.ui.printList(this.taskList);
                         break;
                     case "mark":
                         this.mark(in);
@@ -228,28 +139,21 @@ public class Duchess {
                         this.processUnrecognisedCommand(in);
                         break;
                 }
-                this.saveList();
+                this.storage.saveList(this.taskList);
             } catch (DuchessException e) {
-                System.out.println(e.getMessage());
-                System.out.println(chatLine);
+                this.ui.showError(e.getMessage());
             } catch (Exception e) {
-                System.out.println("Exception Caught: " + e.getMessage());
-                System.out.println(chatLine);
+                this.ui.showError("Exception caught: " + e.getMessage());
             }
         }
     }
 
-    public void exit() {
-        System.out.println(exitMsg);
-        System.out.println(chatLine);
-        this.scanner.close();
-    }
     public static void main(String[] args) {
         Duchess app = new Duchess();
-        app.loadList();
-        app.greeting();
+        app.storage.loadList();
+        app.ui.showGreeting();
         app.start();
-        app.exit();
+        app.ui.exit();
     }
 
 }
