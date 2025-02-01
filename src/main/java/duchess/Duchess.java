@@ -151,7 +151,6 @@ public class Duchess {
 
     public static void main(String[] args) {
         Duchess app = new Duchess();
-        app.storage.loadList();
         app.ui.showGreeting();
         app.start();
         app.ui.exit();
