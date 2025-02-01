@@ -1,3 +1,4 @@
+package duchess;
 import java.util.Scanner;
 
 public class Ui {

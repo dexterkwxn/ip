@@ -1,3 +1,4 @@
+package duchess;
 public class Task {
     String taskName;
     boolean isDone;

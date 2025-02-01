@@ -1,3 +1,4 @@
+package duchess;
 public class Todo extends Task {
     public final static String taskSymbol = "T";
     public Todo(String taskName) {

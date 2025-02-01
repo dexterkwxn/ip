@@ -1,3 +1,4 @@
+package duchess;
 public class DuchessException extends Exception {
     private final ErrorType errorType;
 
