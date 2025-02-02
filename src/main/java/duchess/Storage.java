@@ -5,12 +5,25 @@ import java.io.BufferedReader;
 import java.io.FileWriter; 
 import java.io.FileReader; 
 
+/**
+ * Handles saving and loading tasks from a file.
+ */
 public class Storage {
     String filePath;
+    /**
+     * Constructs a Storage object with the specified file path.
+     *
+     * @param filePath The path to the file where tasks are stored.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Saves the given task list to a file.
+     *
+     * @param taskList The TaskList object containing tasks to be saved.
+     */
     public void saveList(TaskList taskList) {
         File file = new File(this.filePath);
         file.getParentFile().mkdirs();  
@@ -25,6 +38,12 @@ public class Storage {
         }
     }
 
+     /**
+     * Loads tasks from a file and returns them as a TaskList.
+     * If the file does not exist, an empty TaskList is returned.
+     *
+     * @return A TaskList containing tasks loaded from the file.
+     */
     public TaskList loadList() {
         File file = new File(this.filePath);
         TaskList taskList = new TaskList();
@@ -48,6 +67,13 @@ public class Storage {
         return taskList;
     }
 
+     /**
+     * Parses a line from the storage file and converts it into a Task object.
+     *
+     * @param s The line of text representing a task.
+     * @return The corresponding Task object, or null if the entry is invalid.
+     * @throws Exception If there is an error parsing the task data.
+     */
     public Task parseTask(String s) throws Exception {
         try {
             String[] parts = s.split(" \\| ");
