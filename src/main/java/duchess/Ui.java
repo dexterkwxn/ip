@@ -54,7 +54,7 @@ public class Ui {
 
     public void printList(TaskList taskList) {
         for (int i = 0; i < taskList.size(); ++i) {
-            System.out.println(i+1 + ". " + taskList.get(i));
+            System.out.println((i + 1) + ". " + taskList.get(i));
         }
         showLine();
     }
