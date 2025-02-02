@@ -18,6 +18,10 @@ public class Duchess {
     Parser parser;
     Storage storage;
 
+    /**
+     * Constructs a new Duchess application instance.
+     * Initializes UI, parser, storage, and loads the task list.
+     */
     public Duchess() {
         this.ui = new Ui();
         this.parser = new Parser();
@@ -26,6 +30,12 @@ public class Duchess {
         this.taskList = this.storage.loadList();
     }
 
+    /**
+     * Adds a Todo task to the task list.
+     *
+     * @param in The user input containing the task description.
+     * @throws DuchessException If the input format is invalid.
+     */
     public void addTodo(String in) throws DuchessException  {
         try {
             String taskName = in.substring(in.indexOf(" ") + 1);
@@ -36,6 +46,12 @@ public class Duchess {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
     }
+    /**
+     * Adds a Deadline task to the task list.
+     *
+     * @param in The user input containing the task description and deadline.
+     * @throws DuchessException If the input format is invalid.
+     */
     public void addDeadline(String in) throws DuchessException {
         try {
             String byDelimiter = " /by ";
@@ -51,6 +67,12 @@ public class Duchess {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
     }
+    /**
+     * Adds an Event task to the task list.
+     *
+     * @param in The user input containing the task description, start time, and end time.
+     * @throws DuchessException If the input format is invalid.
+     */
     public void addEvent(String in) throws DuchessException {
         try {
             String fromDelimiter = " /from ";
@@ -67,6 +89,12 @@ public class Duchess {
     }
 
 
+    /**
+     * Marks a task as completed.
+     *
+     * @param in The user input specifying the task number.
+     * @throws DuchessException If the input format is invalid.
+     */
     public void mark(String in) throws DuchessException {
         int taskNum;
         try {
@@ -79,6 +107,12 @@ public class Duchess {
         }
     }
 
+    /**
+     * Unmarks a task as not completed.
+     *
+     * @param in The user input specifying the task number.
+     * @throws DuchessException If the input format is invalid.
+     */
     public void unmark(String in) throws DuchessException {
         int taskNum;
         try {
@@ -91,6 +125,12 @@ public class Duchess {
         }
     }
 
+    /**
+     * Deletes a task from the task list.
+     *
+     * @param in The user input specifying the task number.
+     * @throws DuchessException If the input format is invalid.
+     */
     public void deleteTask(String in) throws DuchessException {
         int taskNum;
         try {
@@ -102,10 +142,19 @@ public class Duchess {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
     }
+    /**
+     * Handles unrecognized commands by throwing an exception.
+     *
+     * @param command The unrecognized command input by the user.
+     * @throws DuchessException Always thrown with an invalid command error.
+     */
     public void processUnrecognisedCommand(String command) throws DuchessException {
         throw new DuchessException(command, ErrorType.INVALID_COMMAND);
     }
 
+    /**
+     * Starts the Duchess application, handling user input in a loop.
+     */
     public void start(){
         while (isRunning) {
             try {
@@ -149,6 +198,11 @@ public class Duchess {
         }
     }
 
+    /**
+     * The main entry point for the Duchess application.
+     *
+     * @param args Command-line arguments (unused).
+     */
     public static void main(String[] args) {
         Duchess app = new Duchess();
         app.ui.showGreeting();
