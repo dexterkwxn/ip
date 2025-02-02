@@ -16,6 +16,10 @@ public class Task {
     public void unmark() {
         this.isDone = false;
     }
+
+    public boolean isMarked() {
+        return this.isDone;
+    }
     
     public String toFileFormat() {
         return String.format("%s | %s | %s", taskSymbol, this.isDone ? 1 : 0, this.taskName);
