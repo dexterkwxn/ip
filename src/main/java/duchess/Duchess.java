@@ -106,6 +106,12 @@ public class Duchess {
         throw new DuchessException(command, ErrorType.INVALID_COMMAND);
     }
 
+    public void find(String in) {
+        String keyword = in.substring(in.indexOf(" ") + 1);
+        ArrayList<Task> matchingTasks = this.taskList.find(keyword);
+        this.ui.showMatchingTasks(matchingTasks); 
+    }
+
     public void start(){
         while (isRunning) {
             try {
@@ -135,6 +141,9 @@ public class Duchess {
                         break;
                     case "delete":
                         this.deleteTask(in);
+                        break;
+                    case "find":
+                        this.find(in);
                         break;
                     default:
                         this.processUnrecognisedCommand(in);

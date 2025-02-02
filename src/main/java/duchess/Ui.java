@@ -1,5 +1,6 @@
 package duchess;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Ui {
     String logo = "   ___                    _                              \n"
@@ -76,6 +77,18 @@ public class Ui {
 
     public void showItemDeleted() {
         System.out.println("Item deleted!");
+        showLine();
+    }
+    /**
+     * Displays a list of tasks that match the search keyword.
+     *
+     * @param matchingTasks A list of tasks that match the search criteria.
+     */
+    public void showMatchingTasks(ArrayList<Task> matchingTasks) {
+        System.out.println("Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); ++i) {
+            System.out.println((i + 1) + ". " + matchingTasks.get(i));
+        }
         showLine();
     }
 }
