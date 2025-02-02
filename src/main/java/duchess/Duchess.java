@@ -153,6 +153,17 @@ public class Duchess {
     }
 
     /**
+     * Finds items in the task list that match the keyword and displays it.
+     *
+     * @param in The command input by the user.
+     */
+    public void find(String in) {
+        String keyword = in.substring(in.indexOf(" ") + 1);
+        ArrayList<Task> matchingTasks = this.taskList.find(keyword);
+        this.ui.showMatchingTasks(matchingTasks); 
+    }
+
+    /**
      * Starts the Duchess application, handling user input in a loop.
      */
     public void start(){
@@ -184,6 +195,9 @@ public class Duchess {
                         break;
                     case "delete":
                         this.deleteTask(in);
+                        break;
+                    case "find":
+                        this.find(in);
                         break;
                     default:
                         this.processUnrecognisedCommand(in);
