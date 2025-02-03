@@ -136,6 +136,9 @@ public class Duchess {
         try {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
+            if (taskNum < 0 || taskNum >= this.taskList.size()) {
+                throw new DuchessException(in, ErrorType.INVALID_INDEX);
+            }
             this.taskList.remove(taskNum - 1);
             this.ui.showItemDeleted();
         } catch (Exception e) {
@@ -170,38 +173,38 @@ public class Duchess {
         while (isRunning) {
             try {
                 in = this.ui.readCommand();
-                String[] commandStr= this.parser.parseCommand(in);
+                String[] commandStr = this.parser.parseCommand(in);
                 switch(commandStr[0]) {
-                    case "bye":
-                        isRunning = false;
-                        break;
-                    case "list":
-                        this.ui.printList(this.taskList);
-                        break;
-                    case "mark":
-                        this.mark(in);
-                        break;
-                    case "unmark":
-                        this.unmark(in);
-                        break;
-                    case "todo":
-                        this.addTodo(in);
-                        break;
-                    case "deadline":
-                        this.addDeadline(in);
-                        break;
-                    case "event":
-                        this.addEvent(in);
-                        break;
-                    case "delete":
-                        this.deleteTask(in);
-                        break;
-                    case "find":
-                        this.find(in);
-                        break;
-                    default:
-                        this.processUnrecognisedCommand(in);
-                        break;
+                case "bye":
+                    isRunning = false;
+                    break;
+                case "list":
+                    this.ui.printList(this.taskList);
+                    break;
+                case "mark":
+                    this.mark(in);
+                    break;
+                case "unmark":
+                    this.unmark(in);
+                    break;
+                case "todo":
+                    this.addTodo(in);
+                    break;
+                case "deadline":
+                    this.addDeadline(in);
+                    break;
+                case "event":
+                    this.addEvent(in);
+                    break;
+                case "delete":
+                    this.deleteTask(in);
+                    break;
+                case "find":
+                    this.find(in);
+                    break;
+                default:
+                    this.processUnrecognisedCommand(in);
+                    break;
                 }
                 this.storage.saveList(this.taskList);
             } catch (DuchessException e) {

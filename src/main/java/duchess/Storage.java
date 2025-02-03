@@ -38,7 +38,7 @@ public class Storage {
         }
     }
 
-     /**
+    /**
      * Loads tasks from a file and returns them as a TaskList.
      * If the file does not exist, an empty TaskList is returned.
      *
@@ -67,7 +67,7 @@ public class Storage {
         return taskList;
     }
 
-     /**
+    /**
      * Parses a line from the storage file and converts it into a Task object.
      *
      * @param s The line of text representing a task.

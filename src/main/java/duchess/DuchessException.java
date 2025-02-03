@@ -16,15 +16,18 @@ public class DuchessException extends Exception {
     public String getMessage() {
         String s;
         switch(this.errorType) {
-            case INVALID_COMMAND:
-                s = "What are you blabbering about you babboon.";
-                break;
-            case INVALID_FORMAT:
-                s = "You can do better than that... format your command properly...";
-                break;
-            default:
-                s = "We got an unknown error here...\n" + super.getMessage();
-                break;
+        case INVALID_INDEX:
+            s = "Looks like the index given can't be found...";
+            break;
+        case INVALID_COMMAND:
+            s = "What are you blabbering about you babboon.";
+            break;
+        case INVALID_FORMAT:
+            s = "You can do better than that... format your command properly...";
+            break;
+        default:
+            s = "We got an unknown error here...\n" + super.getMessage();
+            break;
         }
         return s;
     }
