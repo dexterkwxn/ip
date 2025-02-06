@@ -1,15 +1,15 @@
 package duchess;
-import java.io.File; 
-import java.io.BufferedWriter; 
-import java.io.BufferedReader; 
-import java.io.FileWriter; 
-import java.io.FileReader; 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 /**
  * Handles saving and loading tasks from a file.
  */
 public class Storage {
-    String filePath;
+    private String filePath;
     /**
      * Constructs a Storage object with the specified file path.
      *
@@ -26,7 +26,7 @@ public class Storage {
      */
     public void saveList(TaskList taskList) {
         File file = new File(this.filePath);
-        file.getParentFile().mkdirs();  
+        file.getParentFile().mkdirs();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (int i = 0; i < taskList.size(); ++i) {
                 Task task = taskList.get(i);
@@ -47,7 +47,7 @@ public class Storage {
     public TaskList loadList() {
         File file = new File(this.filePath);
         TaskList taskList = new TaskList();
-        
+
         if (!file.exists()) {
             System.out.println("No existing task file found.");
             return taskList;

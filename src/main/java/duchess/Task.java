@@ -3,9 +3,9 @@ package duchess;
  * Represents a task with a name and completion status.
  */
 public class Task {
-    String taskName;
-    boolean isDone;
-    public final static String taskSymbol = "-";
+    private static final String taskSymbol = "-";
+    private String taskName;
+    private boolean isDone;
 
     /**
      * Constructs a Task with the given name.
@@ -16,6 +16,14 @@ public class Task {
     public Task(String taskName) {
         this.taskName = taskName;
         this.isDone = false;
+    }
+
+    public boolean getIsDone() {
+        return this.isDone;
+    }
+
+    public String getTaskname() {
+        return this.taskName;
     }
 
     /**
@@ -40,7 +48,7 @@ public class Task {
     public boolean isMarked() {
         return this.isDone;
     }
-    
+
     /**
      * Returns a string representation of the task in file storage format.
      *
