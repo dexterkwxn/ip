@@ -1,24 +1,24 @@
 package duchess;
-import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Handles user interactions, including displaying messages and reading user input.
  */
 public class Ui {
-    String logo = "   ___                    _                              \n"
-            +"  |   \\   _  _     __    | |_      ___     ___     ___   \n"
-            +"  | |) | | +| |   / _|   | ' \\    / -_)   (_-<    (_-<   \n"
-            +"  |___/   \\_,_|   \\__|_  |_||_|   \\___|   /__/_   /__/_  \n"
-            +"_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"| \n"
-            +"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\n";
-    String chatbotName = "Duchess";
-    String chatLine = "________________________________\n";
-    String greetingMsg = "Hello! I'm " + chatbotName + "\n" + 
-                    "What can I do for you?";
-    String exitMsg = "Bye. Hope to see you again soon!\n";
+    private String logo = "   ___                    _                              \n"
+            + "  |   \\   _  _     __    | |_      ___     ___     ___   \n"
+            + "  | |) | | +| |   / _|   | ' \\    / -_)   (_-<    (_-<   \n"
+            + "  |___/   \\_,_|   \\__|_  |_||_|   \\___|   /__/_   /__/_  \n"
+            + "_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"| \n"
+            + "`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\n";
+    private String chatbotName = "Duchess";
+    private String chatLine = "________________________________\n";
+    private String greetingMsg = "Hello! I'm " + chatbotName + "\n"
+                    + "What can I do for you?";
+    private String exitMsg = "Bye. Hope to see you again soon!\n";
 
-    Scanner scanner;
+    private Scanner scanner;
 
     /**
      * Constructs a Ui instance and initializes the scanner for user input.

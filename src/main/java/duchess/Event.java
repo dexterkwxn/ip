@@ -6,11 +6,12 @@ import java.time.format.DateTimeFormatter;
  * Represents an event task with a start and end time.
  */
 public class Event extends Task {
-    LocalDateTime from;
-    LocalDateTime to;
-    public final static String taskSymbol = "E";
+    private static final String taskSymbol = "E";
     private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
+
+    private LocalDateTime from;
+    private LocalDateTime to;
 
     /**
      * Constructs an Event task with the specified name, start time, and end time.
@@ -32,7 +33,13 @@ public class Event extends Task {
      */
     @Override
     public String toFileFormat() {
-        return String.format("%s | %s | %s | %s | %s", taskSymbol, this.isDone ? 1 : 0, this.taskName, this.from.format(INPUT_FORMATTER), this.to.format(INPUT_FORMATTER));
+        return String.format(
+            "%s | %s | %s | %s | %s",
+            taskSymbol, this.getIsDone() ? 1 : 0,
+            this.getTaskname(),
+            this.from.format(INPUT_FORMATTER),
+            this.to.format(INPUT_FORMATTER)
+            );
     }
 
     /**
@@ -42,8 +49,9 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        String s = "[E]" + super.toString() + " (from: " + this.from.format(OUTPUT_FORMATTER) + ", to: " + this.to.format(OUTPUT_FORMATTER) + ")";
+        String s = "[E]" + super.toString()
+                + " (from: " + this.from.format(OUTPUT_FORMATTER)
+                + ", to: " + this.to.format(OUTPUT_FORMATTER) + ")";
         return s;
     }
-    
 }

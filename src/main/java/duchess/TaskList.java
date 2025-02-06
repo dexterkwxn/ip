@@ -59,7 +59,7 @@ public class TaskList {
     public ArrayList<Task> find(String keyword) {
         ArrayList<Task> matchingTasks = new ArrayList<>();
         for (Task task : taskList) {
-            if (task.taskName.contains(keyword)) {
+            if (task.getTaskname().contains(keyword)) {
                 matchingTasks.add(task);
             }
         }

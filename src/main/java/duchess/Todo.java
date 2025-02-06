@@ -3,7 +3,7 @@ package duchess;
  * Represents a Todo task.
  */
 public class Todo extends Task {
-    public final static String taskSymbol = "T";
+    private static final String taskSymbol = "T";
     /**
      * Constructs a Todo task with the given name.
      *
@@ -20,7 +20,11 @@ public class Todo extends Task {
      */
     @Override
     public String toFileFormat() {
-        return String.format("%s | %s | %s", taskSymbol, this.isDone ? 1 : 0, this.taskName);
+        return String.format(
+            "%s | %s | %s",
+            taskSymbol,
+            this.getIsDone() ? 1 : 0,
+            this.getTaskname());
     }
 
     /**

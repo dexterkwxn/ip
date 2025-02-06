@@ -1,22 +1,31 @@
 package duchess;
-import java.util.Scanner;
 import java.util.ArrayList;
-import java.io.File; 
-import java.io.BufferedWriter; 
-import java.io.BufferedReader; 
-import java.io.FileWriter; 
-import java.io.FileReader; 
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
-public class Duchess {
-    boolean isRunning;
+/**
+ * Duchess class that runs the whole thing.
+ */
+public class Duchess extends Application {
     private static final String FILE_PATH = "./data/list.txt";
 
+    private Image userImage = new Image(this.getClass().getResourceAsStream("/images/user_icon.jpg"));
+    private Image duchessImage = new Image(this.getClass().getResourceAsStream("/images/duchess_icon.jpg"));
 
-    TaskList taskList;
-    String in;
-    Ui ui;
-    Parser parser;
-    Storage storage;
+    private TaskList taskList;
+    private Ui ui;
+    private Parser parser;
+    private Storage storage;
+
+    private VBox chatBox;
+    private Stage primaryStage;
 
     /**
      * Constructs a new Duchess application instance.
@@ -25,7 +34,6 @@ public class Duchess {
     public Duchess() {
         this.ui = new Ui();
         this.parser = new Parser();
-        this.isRunning = true;
         this.storage = new Storage(FILE_PATH);
         this.taskList = this.storage.loadList();
     }
@@ -36,12 +44,14 @@ public class Duchess {
      * @param in The user input containing the task description.
      * @throws DuchessException If the input format is invalid.
      */
-    public void addTodo(String in) throws DuchessException  {
+    public String addTodo(String in) throws DuchessException {
+        String s = "";
         try {
             String taskName = in.substring(in.indexOf(" ") + 1);
             Todo task = new Todo(taskName);
             this.taskList.add(task);
-            this.ui.showAddedTask(task.toString());
+            s += "added: " + task;
+            return s;
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -52,7 +62,8 @@ public class Duchess {
      * @param in The user input containing the task description and deadline.
      * @throws DuchessException If the input format is invalid.
      */
-    public void addDeadline(String in) throws DuchessException {
+    public String addDeadline(String in) throws DuchessException {
+        String s = "";
         try {
             String byDelimiter = " /by ";
             if (in.indexOf(" ") == -1 || in.indexOf(byDelimiter) == -1) {
@@ -62,7 +73,8 @@ public class Duchess {
             String by = in.substring(in.indexOf(byDelimiter) + byDelimiter.length());
             Deadline task = new Deadline(taskName, by);
             this.taskList.add(task);
-            this.ui.showAddedTask(task.toString());
+            s += "added: " + task;
+            return s;
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -73,7 +85,8 @@ public class Duchess {
      * @param in The user input containing the task description, start time, and end time.
      * @throws DuchessException If the input format is invalid.
      */
-    public void addEvent(String in) throws DuchessException {
+    public String addEvent(String in) throws DuchessException {
+        String s = "";
         try {
             String fromDelimiter = " /from ";
             String toDelimiter = " /to ";
@@ -82,7 +95,8 @@ public class Duchess {
             String to = in.substring(in.indexOf(toDelimiter) + toDelimiter.length());
             Event task = new Event(taskName, from, to);
             this.taskList.add(task);
-            this.ui.showAddedTask(task.toString());
+            s += "added: " + task;
+            return s;
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -95,13 +109,15 @@ public class Duchess {
      * @param in The user input specifying the task number.
      * @throws DuchessException If the input format is invalid.
      */
-    public void mark(String in) throws DuchessException {
+    public String mark(String in) throws DuchessException {
         int taskNum;
+        String s = "";
         try {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
             this.taskList.get(taskNum - 1).mark();
-            this.ui.showItemMarked();
+            s += "Item marked!";
+            return s;
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -113,13 +129,15 @@ public class Duchess {
      * @param in The user input specifying the task number.
      * @throws DuchessException If the input format is invalid.
      */
-    public void unmark(String in) throws DuchessException {
+    public String unmark(String in) throws DuchessException {
         int taskNum;
+        String s = "";
         try {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
             this.taskList.get(taskNum - 1).unmark();
-            this.ui.showItemUnmarked();
+            s += "Item marked!";
+            return s;
         } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
@@ -131,17 +149,22 @@ public class Duchess {
      * @param in The user input specifying the task number.
      * @throws DuchessException If the input format is invalid.
      */
-    public void deleteTask(String in) throws DuchessException {
-        int taskNum;
+    public String deleteTask(String in) throws DuchessException {
+        int taskNum = 0;
+        String s = "";
         try {
             String taskNumStr = in.split(" ")[1];
             taskNum = Integer.parseInt(taskNumStr);
-            if (taskNum < 0 || taskNum >= this.taskList.size()) {
+            if (taskNum < 0 || taskNum > this.taskList.size()) {
                 throw new DuchessException(in, ErrorType.INVALID_INDEX);
             }
+            Task task = this.taskList.get(taskNum - 1);
             this.taskList.remove(taskNum - 1);
-            this.ui.showItemDeleted();
-        } catch (Exception e) {
+            s += "deleted: " + task;
+            return s;
+        } catch (DuchessException e) {
+            throw e;
+        }catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
     }
@@ -160,70 +183,146 @@ public class Duchess {
      *
      * @param in The command input by the user.
      */
-    public void find(String in) {
+    public String find(String in) {
         String keyword = in.substring(in.indexOf(" ") + 1);
+        String s = "";
         ArrayList<Task> matchingTasks = this.taskList.find(keyword);
-        this.ui.showMatchingTasks(matchingTasks); 
+        s += "Here are the matching tasks in your list:\n";
+        for (int i = 0; i < matchingTasks.size(); ++i) {
+            s += (i + 1) + ". " + matchingTasks.get(i) + '\n';
+        }
+        return s;
+    }
+
+    /**
+     * Prints the list of tasks stored in the TaskList.
+     *
+     * @param taskList The TaskList containing tasks to be displayed.
+     */
+    public String formatList(TaskList taskList) {
+        String s = "";
+        for (int i = 0; i < taskList.size(); ++i) {
+            s += (i + 1) + ". " + taskList.get(i) + '\n';
+        }
+        return s;
     }
 
     /**
      * Starts the Duchess application, handling user input in a loop.
      */
-    public void start(){
-        while (isRunning) {
-            try {
-                in = this.ui.readCommand();
-                String[] commandStr = this.parser.parseCommand(in);
-                switch(commandStr[0]) {
-                case "bye":
-                    isRunning = false;
-                    break;
-                case "list":
-                    this.ui.printList(this.taskList);
-                    break;
-                case "mark":
-                    this.mark(in);
-                    break;
-                case "unmark":
-                    this.unmark(in);
-                    break;
-                case "todo":
-                    this.addTodo(in);
-                    break;
-                case "deadline":
-                    this.addDeadline(in);
-                    break;
-                case "event":
-                    this.addEvent(in);
-                    break;
-                case "delete":
-                    this.deleteTask(in);
-                    break;
-                case "find":
-                    this.find(in);
-                    break;
-                default:
-                    this.processUnrecognisedCommand(in);
-                    break;
-                }
-                this.storage.saveList(this.taskList);
-            } catch (DuchessException e) {
-                this.ui.showError(e.getMessage());
-            } catch (Exception e) {
-                this.ui.showError("Exception caught: " + e.getMessage());
+    public void processInput(String in) {
+        if (in.trim().isEmpty()) return;
+
+        String duchessMsg = "";
+
+        DialogBox userDialogBox = new DialogBox(in, userImage, true);
+        chatBox.getChildren().addAll(userDialogBox);
+        try {
+            String[] commandStr = this.parser.parseCommand(in);
+            switch(commandStr[0]) {
+            case "bye":
+                primaryStage.close();
+                break;
+            case "list":
+                duchessMsg = this.formatList(this.taskList);
+                break;
+            case "mark":
+                duchessMsg = this.mark(in);
+                break;
+            case "unmark":
+                duchessMsg = this.unmark(in);
+                break;
+            case "todo":
+                duchessMsg = this.addTodo(in);
+                break;
+            case "deadline":
+                duchessMsg = this.addDeadline(in);
+                break;
+            case "event":
+                duchessMsg = this.addEvent(in);
+                break;
+            case "delete":
+                duchessMsg = this.deleteTask(in);
+                break;
+            case "find":
+                duchessMsg = this.find(in);
+                break;
+            default:
+                this.processUnrecognisedCommand(in);
+                break;
             }
+            this.storage.saveList(this.taskList);
+        } catch (DuchessException e) {
+            duchessMsg = e.getMessage();
+        } catch (Exception e) {
+            duchessMsg = "Exception caught: " + e.getMessage();
+        } finally {
+            DialogBox duchessDialogBox = new DialogBox(duchessMsg, duchessImage, false);
+            chatBox.getChildren().addAll(duchessDialogBox);
         }
     }
 
-    /**
-     * The main entry point for the Duchess application.
-     *
-     * @param args Command-line arguments (unused).
-     */
-    public static void main(String[] args) {
-        Duchess app = new Duchess();
-        app.ui.showGreeting();
-        app.start();
-        app.ui.exit();
+
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        BorderPane root = new BorderPane();
+        chatBox = new VBox(10);
+        chatBox.setPadding(new Insets(10));
+        chatBox.setStyle("-fx-background-color: #DFFFE1;");
+
+        ScrollPane scrollPane = new ScrollPane(chatBox);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        chatBox.heightProperty().addListener((observable) -> scrollPane.setVvalue(1.0));
+
+        HBox inputBox = new HBox(10);
+        TextField inputField = new TextField();
+        inputField.setPrefWidth(300);
+
+        Button sendButton = new Button("Send");
+        sendButton.setStyle("-fx-background-color: #00C853; -fx-text-fill: white;");
+
+        sendButton.setOnAction(e -> {
+            processInput(inputField.getText());
+            inputField.clear();
+        });
+
+        inputField.setOnAction(e -> {
+            processInput(inputField.getText());
+            inputField.clear();
+        });
+
+        inputBox.getChildren().addAll(inputField, sendButton);
+        inputBox.setPadding(new Insets(10));
+        inputBox.setAlignment(Pos.CENTER);
+
+        root.setCenter(scrollPane);
+        root.setBottom(inputBox);
+        
+        Scene scene = new Scene(root, 400, 600);
+        primaryStage.setTitle("Chat UI");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void sendMessage(String message) {
+        if (message.trim().isEmpty()) return;
+        
+        HBox messageBox = new HBox(10);
+        messageBox.setAlignment(Pos.CENTER_LEFT);
+        
+        ImageView avatar = new ImageView(new Image("https://via.placeholder.com/50"));
+        avatar.setFitWidth(50);
+        avatar.setFitHeight(50);
+        
+        Label messageLabel = new Label(message);
+        messageLabel.setWrapText(true);
+        messageLabel.setPadding(new Insets(5));
+        messageLabel.setStyle("-fx-background-color: #81D4FA; -fx-text-fill: black; -fx-padding: 10px; -fx-background-radius: 10px;");
+
+        messageBox.getChildren().addAll(avatar, messageLabel);
+        chatBox.getChildren().add(messageBox);
     }
 }

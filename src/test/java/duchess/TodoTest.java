@@ -1,10 +1,10 @@
 package duchess;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+
 public class TodoTest {
-    
     @Test
     void testMark() {
         Todo task = new Todo("Task 1");
