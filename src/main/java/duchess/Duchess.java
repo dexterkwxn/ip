@@ -310,23 +310,4 @@ public class Duchess extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-    private void sendMessage(String message) {
-        if (message.trim().isEmpty()) return;
-        
-        HBox messageBox = new HBox(10);
-        messageBox.setAlignment(Pos.CENTER_LEFT);
-        
-        ImageView avatar = new ImageView(new Image("https://via.placeholder.com/50"));
-        avatar.setFitWidth(50);
-        avatar.setFitHeight(50);
-        
-        Label messageLabel = new Label(message);
-        messageLabel.setWrapText(true);
-        messageLabel.setPadding(new Insets(5));
-        messageLabel.setStyle("-fx-background-color: #81D4FA; -fx-text-fill: black; -fx-padding: 10px; -fx-background-radius: 10px;");
-
-        messageBox.getChildren().addAll(avatar, messageLabel);
-        chatBox.getChildren().add(messageBox);
-    }
 }
