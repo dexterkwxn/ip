@@ -257,6 +257,10 @@ public class Duchess extends Application {
         } catch (Exception e) {
             duchessMsg = "Exception caught: " + e.getMessage();
         } finally {
+            // response message should not be empty
+            assert !duchessMsg.equals("") : 
+                    "Duchess.java: processInput() -" 
+                    + "Assertion failed: duchessMsg should not be empty here";
             DialogBox duchessDialogBox = new DialogBox(duchessMsg, duchessImage, false);
             chatBox.getChildren().addAll(duchessDialogBox);
         }
