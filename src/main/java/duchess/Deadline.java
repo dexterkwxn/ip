@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
  * A {@code Deadline} object stores the task name and the due date/time.
  */
 public class Deadline extends Task {
-    private static final String taskSymbol = "D";
+    private static final String TASK_SYMBOL = "D";
     private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
 
@@ -36,7 +36,7 @@ public class Deadline extends Task {
     public String toFileFormat() {
         return String.format(
             "%s | %s | %s | %s",
-            taskSymbol, this.getIsDone() ? 1 : 0,
+            TASK_SYMBOL, this.getIsDone() ? 1 : 0,
             this.getTaskname(),
             this.by.format(INPUT_FORMATTER)
             );

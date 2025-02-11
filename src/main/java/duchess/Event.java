@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
  * Represents an event task with a start and end time.
  */
 public class Event extends Task {
-    private static final String taskSymbol = "E";
+    private static final String TASK_SYMBOL= "E";
     private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
 
@@ -35,7 +35,7 @@ public class Event extends Task {
     public String toFileFormat() {
         return String.format(
             "%s | %s | %s | %s | %s",
-            taskSymbol, this.getIsDone() ? 1 : 0,
+            TASK_SYMBOL, this.getIsDone() ? 1 : 0,
             this.getTaskname(),
             this.from.format(INPUT_FORMATTER),
             this.to.format(INPUT_FORMATTER)
