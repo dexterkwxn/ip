@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
  * Represents an event task with a start and end time.
  */
 public class Event extends Task {
-    private static final String TASK_SYMBOL= "E";
+    private static final String TASK_SYMBOL = "E";
     private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
 

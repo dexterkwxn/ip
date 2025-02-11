@@ -3,7 +3,7 @@ package duchess;
  * Represents a Todo task.
  */
 public class Todo extends Task {
-    private static final String TASK_SYMBOL= "T";
+    private static final String TASK_SYMBOL = "T";
     /**
      * Constructs a Todo task with the given name.
      *

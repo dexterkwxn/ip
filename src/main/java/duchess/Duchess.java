@@ -1,13 +1,17 @@
 package duchess;
 import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -20,7 +24,6 @@ public class Duchess extends Application {
     private Image duchessImage = new Image(this.getClass().getResourceAsStream("/images/duchess_icon.jpg"));
 
     private TaskList taskList;
-    private Ui ui;
     private Parser parser;
     private Storage storage;
 
@@ -32,7 +35,6 @@ public class Duchess extends Application {
      * Initializes UI, parser, storage, and loads the task list.
      */
     public Duchess() {
-        this.ui = new Ui();
         this.parser = new Parser();
         this.storage = new Storage(FILE_PATH);
         this.taskList = this.storage.loadList();
@@ -167,7 +169,7 @@ public class Duchess extends Application {
             return s;
         } catch (DuchessException e) {
             throw e;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new DuchessException(in, ErrorType.INVALID_FORMAT);
         }
     }
@@ -214,7 +216,9 @@ public class Duchess extends Application {
      * Starts the Duchess application, handling user input in a loop.
      */
     public void processInput(String in) {
-        if (in.trim().isEmpty()) return;
+        if (in.trim().isEmpty()) {
+            return;
+        }
 
         String duchessMsg = "";
 
@@ -261,8 +265,8 @@ public class Duchess extends Application {
             duchessMsg = "Exception caught: " + e.getMessage();
         } finally {
             // response message should not be empty
-            assert !duchessMsg.equals("") : 
-                    "Duchess.java: processInput() -" 
+            assert !duchessMsg.equals("")
+                    : "Duchess.java: processInput() -"
                     + "Assertion failed: duchessMsg should not be empty here";
             DialogBox duchessDialogBox = new DialogBox(duchessMsg, duchessImage, false);
             chatBox.getChildren().addAll(duchessDialogBox);
@@ -307,9 +311,9 @@ public class Duchess extends Application {
 
         root.setCenter(scrollPane);
         root.setBottom(inputBox);
-        
+
         Scene scene = new Scene(root, 400, 600);
-        primaryStage.setTitle("Chat UI");
+        primaryStage.setTitle("Duchess");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
