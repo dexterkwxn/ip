@@ -49,6 +49,18 @@ public class DuchessException extends Exception {
         case INVALID_FORMAT:
             s = "You can do better than that... format your command properly...";
             break;
+        case INVALID_FORMAT_TODO:
+            s = "You can do better than that... follow this format will ya?\n"
+                    + "todo <task>";
+            break;
+        case INVALID_FORMAT_DEADLINE:
+            s = "You can do better than that... follow this format will ya?\n"
+                    + "deadline <task> /by <yyyy-MM-dd HHmm>";
+            break;
+        case INVALID_FORMAT_EVENT:
+            s = "You can do better than that... follow this format will ya?\n"
+                    + "event <task> /from <yyyy-MM-dd HHmm> /to <yyyy-MM-dd HHmm>";
+            break;
         default:
             s = "We got an unknown error here...\n" + super.getMessage();
             break;

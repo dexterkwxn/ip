@@ -1,5 +1,5 @@
 T | 0 | aaa1
 T | 0 | aaa3 
 D | 0 | deadline1 | 2024-01-01 1200
-T | 0 | testing
-T | 0 | zzz
+D | 0 | s | 1999-03-12 1000
+E | 0 | event event task | 1234-04-23 1023 | 5678-04-23 1045

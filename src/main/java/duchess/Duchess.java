@@ -47,13 +47,14 @@ public class Duchess extends Application {
     public String addTodo(String in) throws DuchessException {
         String s = "";
         try {
-            String taskName = in.substring(in.indexOf(" ") + 1);
+            String[] tokens = in.split(" ");
+            String taskName = in.substring(in.indexOf(tokens[1]));
             Todo task = new Todo(taskName);
             this.taskList.add(task);
             s += "added: " + task;
             return s;
         } catch (Exception e) {
-            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT_TODO);
         }
     }
     /**
@@ -66,17 +67,16 @@ public class Duchess extends Application {
         String s = "";
         try {
             String byDelimiter = " /by ";
-            if (in.indexOf(" ") == -1 || in.indexOf(byDelimiter) == -1) {
-                throw new DuchessException(in, ErrorType.INVALID_FORMAT);
-            }
-            String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(byDelimiter));
+
+            String[] tokens = in.split(" ");
+            String taskName = in.substring(in.indexOf(tokens[1]), in.indexOf(byDelimiter));
             String by = in.substring(in.indexOf(byDelimiter) + byDelimiter.length());
             Deadline task = new Deadline(taskName, by);
             this.taskList.add(task);
             s += "added: " + task;
             return s;
         } catch (Exception e) {
-            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT_DEADLINE);
         }
     }
     /**
@@ -90,7 +90,10 @@ public class Duchess extends Application {
         try {
             String fromDelimiter = " /from ";
             String toDelimiter = " /to ";
-            String taskName = in.substring(in.indexOf(" ") + 1, in.indexOf(fromDelimiter));
+
+            String[] tokens = in.split(" ");
+            String taskName = in.substring(in.indexOf(tokens[1]), in.indexOf(fromDelimiter));
+
             String from = in.substring(in.indexOf(fromDelimiter) + fromDelimiter.length(), in.indexOf(toDelimiter));
             String to = in.substring(in.indexOf(toDelimiter) + toDelimiter.length());
             Event task = new Event(taskName, from, to);
@@ -98,7 +101,7 @@ public class Duchess extends Application {
             s += "added: " + task;
             return s;
         } catch (Exception e) {
-            throw new DuchessException(in, ErrorType.INVALID_FORMAT);
+            throw new DuchessException(in, ErrorType.INVALID_FORMAT_EVENT);
         }
     }
 
