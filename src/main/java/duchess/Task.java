@@ -3,7 +3,7 @@ package duchess;
  * Represents a task with a name and completion status.
  */
 public class Task {
-    private static final String taskSymbol = "-";
+    private static final String TASK_SYMBOL = "-";
     private String taskName;
     private boolean isDone;
 
@@ -55,7 +55,7 @@ public class Task {
      * @return A formatted string for file storage.
      */
     public String toFileFormat() {
-        return String.format("%s | %s | %s", taskSymbol, this.isDone ? 1 : 0, this.taskName);
+        return String.format("%s | %s | %s", TASK_SYMBOL, this.isDone ? 1 : 0, this.taskName);
     }
 
     /**
