@@ -1,4 +1,5 @@
-T | 0 | testing
-D | 0 | deadline1 | 2024-01-01 1200
 T | 0 | aaa1
 T | 0 | aaa3 
+D | 0 | deadline1 | 2024-01-01 1200
+T | 0 | testing
+T | 0 | zzz

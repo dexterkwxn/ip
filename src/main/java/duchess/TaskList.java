@@ -1,5 +1,7 @@
 package duchess;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Represents a list of tasks.
@@ -64,5 +66,9 @@ public class TaskList {
             }
         }
         return matchingTasks;
+    }
+
+    public void sort() {
+        Collections.sort(taskList, Comparator.comparing(Task::getTaskname));
     }
 }
